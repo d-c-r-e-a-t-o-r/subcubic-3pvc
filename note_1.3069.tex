@@ -7,7 +7,7 @@
 \newtheorem{lemma}{Lemma}
 \newtheorem{corollary}{Corollary}
 
-\title{A Polynomial-Space $O(1.4289^n)$ Algorithm for\\ 3-Path Vertex Cover on Subcubic Graphs}
+\title{A Polynomial-Space $O(1.3069^n)$ Algorithm for\\ 3-Path Vertex Cover on Subcubic Graphs}
 \author{}
 \date{}
 
@@ -15,14 +15,16 @@
 \maketitle
 
 \begin{abstract}
-We observe that a greedy induced matching yields a dissociation set of size at least
-$n/3$ in every subcubic graph. Hence the minimum 3-path vertex cover has size at most
-$2n/3$. Combining this bound with the polynomial-space parameterized algorithm of
-\v{C}erven\'y and Such\'y (arXiv:2111.05896), which runs in $O^*(1.708^k)$ time, gives
-an $O^*(1.708^{2n/3}) = O(1.4289^n)$-time polynomial-space algorithm for 3-path vertex
-cover on subcubic graphs. This improves the previous polynomial-space bound
-$O(1.4613^n)$ of Chang et al.\ (2018). It does not improve the exponential-space bound
-$O(1.3659^n)$.
+A known lower bound on the dissociation number gives
+$\operatorname{diss}(G) \ge n/\lceil(\Delta+1)/2\rceil$ for every graph of maximum
+degree $\Delta$; for subcubic graphs this is $\operatorname{diss}(G) \ge n/2$.
+Hence the minimum 3-path vertex cover has size at most $n/2$. Combining this bound
+with the polynomial-space parameterized algorithm of \v{C}erven\'y and Such\'y
+(arXiv:2111.05896), which runs in $O^*(1.708^k)$ time, gives an
+$O^*(1.708^{n/2}) = O(1.3069^n)$-time polynomial-space algorithm for 3-path vertex
+cover on subcubic graphs. This improves both the previous polynomial-space bound
+$O(1.4613^n)$ of Chang et al.\ (2018) and the exponential-space bound
+$O(1.3659^n)$ of Xiao and Kou (2017).
 \end{abstract}
 
 \section{Definitions and known results}
@@ -45,52 +47,32 @@ $O^*(2^k)$ (Tu), $O^*(1.8127^k)$ (Katrenič), $O^*(1.7485^k)$ (Xiao and Kou, pol
 space), $O^*(1.713^k)$ (Tsur), and $O^*(1.708^k)$ (\v{C}erven\'y and Such\'y, 2021,
 branch-and-reduce, polynomial space).
 
-\section{A dissociation set of size at least $n/3$}
+\section{A dissociation set of size at least $n/2$}
+
+We use the following known lower bound on the dissociation number; it is due to
+Bre\v{s}ar, Kardo\v{s}, Katreni\v{c}, and Semani\v{s}in (2011) and is also restated in Bock, Pardey,
+Penso, and Rautenbach (J.\ Graph Theory, 2023).
 
 \begin{lemma}
-Every subcubic graph $G$ on $n$ vertices has a dissociation set of size at least
-$n/3$.
+If $G$ has maximum degree $\Delta$, then
+$\operatorname{diss}(G) \ge n/\lceil(\Delta+1)/2\rceil$.
 \end{lemma}
 
-\begin{proof}
-Construct a set $S$ greedily. Start with $S = \emptyset$. While $G$ has an edge, choose
-an edge $uv$, add $u$ and $v$ to $S$, and delete $N[u] \cup N[v]$ from $G$. When no
-edge remains, add all remaining (isolated) vertices to $S$.
-
-We claim $G[S]$ has maximum degree at most $1$. Every time an edge $uv$ is chosen, all
-neighbours of $u$ and $v$ are deleted; hence no vertex of $S$ outside $\{u,v\}$ is
-adjacent to $u$ or $v$, and no edge between the endpoints of two different chosen
-edges survives. The only edges inside $S$ are the chosen matching edges; the vertices
-added at the end are isolated. Thus $G[S]$ is a matching plus isolated vertices.
-
-For the size bound, let $t$ be the number of chosen edges. Each step deletes the two
-endpoints (which are in $S$) and at most $2(\Delta-1) \le 4$ other neighbours, so the
-number of deleted vertices that are not in $S$ is at most $4t$. Hence
-\[
-  n \;\le\; |S| + 4t .
-\]
-Since the $2t$ endpoints are distinct vertices of $S$, we have $2t \le |S|$, and
-therefore
-\[
-  n \;\le\; |S| + 2|S| \;=\; 3|S| ,
-\]
-so $|S| \ge n/3$.
-\end{proof}
-
 \begin{corollary}
-Every subcubic graph satisfies $k^*(G) \le 2n/3$.
+Every subcubic graph satisfies $\operatorname{diss}(G) \ge n/2$, and hence
+$k^*(G) \le n/2$.
 \end{corollary}
 
 \begin{proof}
-By Lemma 1 there is a dissociation set $S$ of size at least $n/3$. Its complement
-$V \setminus S$ is a 3-path vertex cover of size at most $2n/3$.
+For $\Delta \le 3$ we have $\lceil(\Delta+1)/2\rceil \le 2$, so
+$\operatorname{diss}(G) \ge n/2$. The complement of a maximum dissociation set is a
+3-path vertex cover of size $n-\operatorname{diss}(G) \le n/2$.
 \end{proof}
 
 \section{The algorithm}
 
 \begin{enumerate}
-\item Compute the greedy set $S$ of Lemma 1 and let $k_0 = n - |S|$. By Corollary 2,
-      $k^*(G) \le k_0 \le 2n/3$.
+\item Let $k_0 = \lfloor n/2 \rfloor$. By Corollary 2, $k^*(G) \le k_0$.
 \item For $k = 0,1,\dots,k_0$, run the polynomial-space decision algorithm
       \texttt{P3VC}$(G,k)$ of \v{C}erven\'y and Such\'y.
 \item Return the smallest $k$ for which \texttt{P3VC}$(G,k)$ answers yes.
@@ -102,9 +84,9 @@ returns $k^*(G)$.
 \textbf{Time.} The $k$-th call takes $O^*(1.708^k)$ time. The sum over
 $k=0,\dots,k_0$ is dominated by the last term, hence
 \[
-  O^*(1.708^{k_0}) \;\le\; O^*(1.708^{2n/3}) \;=\; O(1.4289^n).
+  O^*(1.708^{k_0}) \;\le\; O^*(1.708^{n/2}) \;=\; O(1.3069^n).
 \]
-($1.708^{2/3} = 1.42886\ldots$.)
+($1.708^{1/2} = 1.30691\ldots$.)
 
 \textbf{Space.} The algorithm of \v{C}erven\'y and Such\'y is a branch-and-reduce
 algorithm and uses polynomial space; the loop only stores the current instance. Hence
@@ -121,45 +103,54 @@ Kardoš et al.\ 2011 & $O^*(1.5171^n)$ & polynomial \\
 Chang et al. & $O^*(1.4658^n)$ & polynomial \\
 Chang et al.\ 2018 & $O^*(1.4613^n)$ & polynomial \\
 Xiao--Kou 2017 & $O^*(1.3659^n)$ & exponential \\
-\textbf{This note} & $\boldsymbol{O(1.4289^n)}$ & \textbf{polynomial} \\
+\textbf{This note} & $\boldsymbol{O(1.3069^n)}$ & \textbf{polynomial} \\
 \hline
 \end{tabular}
 \end{center}
 
-The new bound improves the polynomial-space bound $O(1.4613^n)$ to $O(1.4289^n)$.
-It does not improve the exponential-space bound $O(1.3659^n)$.
+The new bound improves both the polynomial-space bound $O(1.4613^n)$ and the
+exponential-space bound $O(1.3659^n)$.
 
 \section{Remarks and limitations}
 
 \begin{itemize}
 \item The result is specific to graphs of maximum degree 3.
-\item The improvement over the previous polynomial-space bound is about $2.2\%$.
+\item The improvement over the exponential-space bound is about $4.3\%$.
+\item The lower bound $\operatorname{diss}(G) \ge n/2$ is tight: $K_4$ has
+      $\operatorname{diss}(K_4)=2=n/2$.
 \item The argument is black-box with respect to the parameterized algorithm. If the
       parameterized bound $1.708^k$ is improved, the same construction improves
-      accordingly: a parameterized bound $c^k$ and the bound $k \le 2n/3$ give
-      $c^{2n/3}$.
-\item A larger constructive dissociation set would improve the bound further. The greedy
-      construction gives $n/3$. A bound of $2n/5$ (i.e.\ $k \le 3n/5$) would give
-      $1.708^{3/5} = 1.3788^n$. Reaching the exponential-space bound $1.3659^n$ would
-      require $k/n \le 0.5825$, i.e.\ a constructive dissociation set of size at least
-      $0.4175n$.
+      accordingly: a parameterized bound $c^k$ and the bound $k \le n/2$ give
+      $c^{n/2}$.
 \end{itemize}
 
 \section{Novelty check}
 
-A web search for the bound $1.4289$ and related queries did not find a prior
-$1.4289^n$ bound. The relevant prior work is the parameterized algorithm of
-\v{C}erven\'y and Such\'y ($O^*(1.708^k)$, branch-and-reduce), the exponential-space
-bound $O^*(1.3659^n)$ of Xiao and Kou, and the polynomial-space bound
-$O^*(1.4613^n)$ of Chang et al.\ (2018). The hybrid used here is elementary and may be
-folklore; novelty should be verified against the latest literature before submission.
+A web search for the bound $1.3069$ and related queries did not find a prior
+$1.3069^n$ bound. The ingredients are known: the lower bound
+$\operatorname{diss}(G) \ge n/\lceil(\Delta+1)/2\rceil$ (see Bre\v{s}ar et al., 2011;
+Bock et al., 2023) and
+the parameterized algorithm of \v{C}erven\'y and Such\'y ($O^*(1.708^k)$). The hybrid
+is elementary and may be folklore; novelty should be verified against the latest
+literature before submission.
 
 \begin{thebibliography}{9}
 
-\bibitem{cs21}
+\bibitem{bkks11}
+B.~Bre\v{s}ar, F.~Kardo\v{s}, J.~Katreni\v{c}, and G.~Semani\v{s}in.
+Minimum $k$-path vertex cover.
+\emph{Discrete Applied Mathematics} 159(12) (2011), 1189--1195.
+
+\bibitem{bppr23}
+F.~Bock, J.~Pardey, L.~D.~Penso, and D.~Rautenbach.
+A bound on the dissociation number.
+\emph{Journal of Graph Theory} 103(4) (2023), 661--673.
+
+\bibitem{cs23}
 R.~\v{C}erven\'y and O.~Such\'y.
 Generating faster algorithms for $d$-Path Vertex Cover.
-arXiv:2111.05896, 2021.
+In \emph{WG 2023}, LNCS 14093, Springer, 2023, pp.~157--171.
+(Full version: arXiv:2111.05896.)
 
 \bibitem{tsur}
 D.~Tsur.
