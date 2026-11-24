@@ -50,13 +50,21 @@ branch-and-reduce, polynomial space).
 \section{A dissociation set of size at least $n/2$}
 
 We use the following known lower bound on the dissociation number; it is due to
-Bre\v{s}ar, Kardo\v{s}, Katreni\v{c}, and Semani\v{s}in (2011) and is also restated in Bock, Pardey,
-Penso, and Rautenbach (J.\ Graph Theory, 2023).
+Bre\v{s}ar, Kardo\v{s}, Katreni\v{c}, and Semani\v{s}in (2011) (Theorem~6 and
+Corollary~7), and is also restated in Bock, Pardey, Penso, and Rautenbach
+(J.\ Graph Theory, 2023).
 
 \begin{lemma}
 If $G$ has maximum degree $\Delta$, then
 $\operatorname{diss}(G) \ge n/\lceil(\Delta+1)/2\rceil$.
 \end{lemma}
+
+\begin{proof}
+By Theorem~6 of Bre\v{s}ar et al., the vertex set of a graph of maximum degree
+$\Delta$ can be partitioned, in $O(|E(G)|)$ time, into $\lceil(\Delta+1)/2\rceil$
+sets each inducing a subgraph of maximum degree at most $1$. The largest set has
+size at least $n/\lceil(\Delta+1)/2\rceil$ and is a dissociation set.
+\end{proof}
 
 \begin{corollary}
 Every subcubic graph satisfies $\operatorname{diss}(G) \ge n/2$, and hence

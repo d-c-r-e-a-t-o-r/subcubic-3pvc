@@ -17,10 +17,13 @@ cover on subcubic graphs. This improves both the previous polynomial-space bound
 
 ## Result
 
-**Lemma.** If \(G\) has maximum degree \(\Delta\), then
-\(\operatorname{diss}(G) \ge n/\lceil(\Delta+1)/2\rceil\). This bound is due to
-Brešar, Kardoš, Katrenič, and Semanišin (2011); see also Bock, Pardey, Penso, and
-Rautenbach (J. Graph Theory, 2023).
+**Lemma (Brešar et al. 2011, Theorem 6 and Corollary 7).** If \(G\) has maximum
+degree \(\Delta\), then \(\operatorname{diss}(G) \ge n/\lceil(\Delta+1)/2\rceil\).
+In fact, \(V\) can be partitioned in \(O(|E(G)|)\) time into
+\(\lceil(\Delta+1)/2\rceil\) sets each inducing a subgraph of maximum degree at most
+\(1\); the largest such set is a dissociation set of size at least
+\(n/\lceil(\Delta+1)/2\rceil\). See also Bock, Pardey, Penso, and Rautenbach
+(J. Graph Theory, 2023).
 
 **Corollary.** Every subcubic graph satisfies \(\operatorname{diss}(G) \ge n/2\), hence
 the minimum 3-path vertex cover has size at most \(n/2\). The bound is tight: \(K_4\)
