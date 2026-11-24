@@ -6,6 +6,7 @@
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}{Lemma}
 \newtheorem{corollary}{Corollary}
+\newtheorem*{theorem*}{Theorem}
 
 \title{A Polynomial-Space $O(1.3069^n)$ Algorithm for\\ 3-Path Vertex Cover on Subcubic Graphs}
 \author{}
@@ -24,7 +25,9 @@ with the polynomial-space parameterized algorithm of \v{C}erven\'y and Such\'y
 $O^*(1.708^{n/2}) = O(1.3069^n)$-time polynomial-space algorithm for 3-path vertex
 cover on subcubic graphs. This improves both the previous polynomial-space bound
 $O(1.4613^n)$ of Chang et al.\ (2018) and the exponential-space bound
-$O(1.3659^n)$ of Xiao and Kou (2017).
+$O(1.3659^n)$ of Xiao and Kou (2017). Conditionally on the 2026 preprint of Gaspers
+(arXiv:2611.05146), we also record $O(1.2823^n)$ for all subcubic graphs and
+$O(1.2812^n)$ for triangle-free subcubic graphs, both in polynomial space.
 \end{abstract}
 
 \section{Definitions and known results}
@@ -37,13 +40,13 @@ and only if $V \setminus S$ is a 3-path vertex cover. Let $k^*(G)$ be the minimu
 of a 3-path vertex cover of $G$.
 
 Known exact algorithms for an $n$-vertex graph are
-$O^*(1.5171^n)$ (Kardoš, Katrenič, and Schiermeyer),
+$O^*(1.5171^n)$ (Kardo\v{s}, Katreni\v{c}, and Schiermeyer),
 $O^*(1.4658^n)$ (Chang et al.),
 $O^*(1.4613^n)$ time and polynomial space (Chang et al., 2018),
 $O^*(1.3659^n)$ time with exponential space (Xiao and Kou, 2017).
 
 For the parameterized version, the running time was improved successively to
-$O^*(2^k)$ (Tu), $O^*(1.8127^k)$ (Katrenič), $O^*(1.7485^k)$ (Xiao and Kou, polynomial
+$O^*(2^k)$ (Tu), $O^*(1.8127^k)$ (Katreni\v{c}), $O^*(1.7485^k)$ (Xiao and Kou, polynomial
 space), $O^*(1.713^k)$ (Tsur), and $O^*(1.708^k)$ (\v{C}erven\'y and Such\'y, 2021,
 branch-and-reduce, polynomial space).
 
@@ -107,7 +110,7 @@ the whole algorithm uses polynomial space.
 \hline
 Algorithm & Time & Space \\
 \hline
-Kardoš et al.\ 2011 & $O^*(1.5171^n)$ & polynomial \\
+Kardo\v{s} et al.\ 2011 & $O^*(1.5171^n)$ & polynomial \\
 Chang et al. & $O^*(1.4658^n)$ & polynomial \\
 Chang et al.\ 2018 & $O^*(1.4613^n)$ & polynomial \\
 Xiao--Kou 2017 & $O^*(1.3659^n)$ & exponential \\
@@ -118,6 +121,152 @@ Xiao--Kou 2017 & $O^*(1.3659^n)$ & exponential \\
 
 The new bound improves both the polynomial-space bound $O(1.4613^n)$ and the
 exponential-space bound $O(1.3659^n)$.
+
+\section{Conditional improvements via Max 2-CSP}
+
+The bounds in this section rely on the following 2026 preprint, which has not yet
+been peer-reviewed. We state them conditionally; the \(O(1.3069^n)\) bound of the
+previous sections remains unconditional.
+
+\begin{theorem*}[Gaspers, arXiv:2611.05146, Theorem~C.3(a)]
+For every \(r\ge2\), cubic Max \((r,2)\)-CSP can be solved in polynomial space and
+time \(r^{\gamma N+o(N)}\), where
+\[
+  \gamma=\frac{2c_3}{1+4c_3},\qquad
+  c_3=\frac{3}{4\pi}\arccos\frac56<0.1398,
+\]
+so \(\gamma<0.179341\).
+\end{theorem*}
+
+\subsection*{A four-state encoding}
+
+Let \(G\) be subcubic with no isolated vertices. For each \(v\in V(G)\) create a
+variable \(x_v\in\{\bot\}\cup N(v)\); since \(\deg(v)\le3\), the domain has size at
+most \(4\). The unary score is \(w_v(\bot)=0\) and \(w_v(u)=1\) for \(u\in N(v)\).
+For each edge \(uv\) the binary score is \(0\) if \(x_u=\bot\) or \(x_v=\bot\) or
+\((x_u,x_v)=(v,u)\), and \(-(n+1)\) otherwise. This is a Max 2-CSP whose constraint
+graph is \(G\).
+
+\begin{lemma}
+The maximum score of the encoding equals \(\operatorname{diss}(G)\).
+\end{lemma}
+
+\begin{proof}
+If \(S\) is a dissociation set, set \(x_v\) to the unique neighbour of \(v\) in \(S\)
+when it exists, to an arbitrary neighbour when \(v\in S\) has no neighbour in \(S\),
+and to \(\bot\) when \(v\notin S\). Every edge with both endpoints in \(S\) joins two
+paired vertices, so no penalty is paid and the score is \(|S|\). Conversely, if an
+assignment pays no penalty, let \(S=\{v:x_v\ne\bot\}\). If \(v\in S\) had two
+neighbours in \(S\), then \(x_v\) would have to equal both of them, impossible; hence
+\(S\) is a dissociation set and the score is \(|S|\). Finally, any assignment that
+pays a penalty scores at most \(n-(n+1)<0\), while the all-\(\bot\) assignment
+scores \(0\); so an optimum pays no penalty. Isolated vertices are put into \(S\)
+separately and removed.
+\end{proof}
+
+Eliminating a variable of degree at most \(2\) is exact: for each assignment of its
+neighbours, take the maximum over its at most four values and add the resulting
+potential to the neighbours. The constraint graph stays subcubic, and after all
+degree-\(0,1,2\) variables are eliminated the remaining graph is cubic on
+\(N\le n_3\) variables, where \(n_3\) is the number of degree-\(3\) vertices of
+\(G\). Recording the argmax in each elimination recovers an optimal assignment in
+polynomial time and space.
+
+\begin{theorem*}[conditional, all subcubic graphs]
+Assume the Gaspers theorem above. Then 3-path vertex cover on subcubic graphs can be
+solved in polynomial space and time \(O(1.2823^n)\).
+\end{theorem*}
+
+\begin{proof}
+Encode \(G\) as above, eliminate degree-\(\le2\) variables, and run the algorithm of
+the Gaspers theorem on the cubic core with \(r=4\). Since
+\(4^\gamma=1.282254\ldots<1.2823\) and \(N\le n_3\le n\), the running time is
+\(O(1.2823^n)\). The solution is recovered by self-reduction: fix variables one at a
+time and rerun the optimisation, at most four times per variable. This adds a
+polynomial factor and keeps polynomial space.
+\end{proof}
+
+\subsection*{Local branching for triangle-free graphs}
+
+Throughout this subsection \(G\) is triangle-free and subcubic. Let \(n_3\) be the
+number of degree-\(3\) vertices and \(\mu(G)=0.95n_3+0.05n\). A vertex \(v\) is a
+\emph{branching point} if every vertex within distance at most \(3\) of \(v\) has
+degree \(3\). Let \(B_2(v)\) be the set of vertices within distance at most \(2\) of
+\(v\).
+
+For a branching point \(v\) we branch as follows: delete \(v\); keep \(v\) isolated
+(delete \(N[v]\) and add \(1\)); or pair \(v\) with one of its three neighbours \(u\)
+(delete \(N[v]\cup N[u]\) and add \(2\)). The following table gives the guaranteed
+decrease of \(n_3\) and of \(\mu\) in the five branches; the branch deleting \(v\) is
+first, the branch keeping \(v\) isolated second, and the three pairing branches last.
+
+\begin{center}
+\small
+\begin{tabular}{llll}
+\hline
+Case & \(n_3\) decrease & \(\mu\) decrease & \(\sum r^{-\Delta\mu}\) at \(r=1.2812\) \\
+\hline
+\(|B_2(v)|\ge8\) & \(4,8,8,8,8\) & \(3.85,7.8,7.9,7.9,7.9\) & \(0.9535\) \\
+\(|B_2(v)|\le7\), no equal neighbourhoods & \(4,7,8,8,8\) & \(3.85,6.85,7.9,7.9,7.9\) & \(0.991939\) \\
+equal neighbourhoods & two branches, \(n_3\) decrease \(\ge5\) & --- & \(<0.591\) \\
+\hline
+\end{tabular}
+\end{center}
+
+In the second line, the three neighbours of \(v\) have second-layer neighbours
+forming three distinct pairs \(\{a,b\},\{b,c\},\{a,c\}\); triangle-freeness makes
+\(a,b,c\) pairwise non-adjacent, and every pairing branch removes the seven
+degree-\(3\) vertices of the ball and at least one further degree-\(3\) vertex. In the
+third line, if two neighbours of \(v\) have the same neighbourhood, some optimum
+keeps both or deletes both; the two branches each decrease \(n_3\) by at least \(5\)
+and their \(r^{-\Delta\mu}\) sum is below \(0.591\).
+
+If no branching point exists, every degree-\(3\) vertex is within distance \(3\) of a
+low-degree vertex. Such a vertex covers at most \(2+4+8=14\) degree-\(3\) vertices, so
+\(n_3\le14(n-n_3)\), and the backend of the conditional all-subcubic bound costs at
+most
+\[
+  1.2823^{n_3}\le1.2823^{14\mu/14.05}
+  =1.2811658\ldots^{\mu}<1.2812^{\mu}.
+\]
+At a branching point the five-branch inequality is below \(1\) at \(r=1.2812\)
+(\(0.9535\) and \(0.991939\) in the two cases), and the two-branch inequality is
+below \(1\). By induction on \(\mu\), the total running time is
+\(O(1.2812^{\mu(G)})=O(1.2812^n)\). A depth-first traversal records the best branch
+at each node and recovers an optimal solution in polynomial space.
+
+\begin{theorem*}[conditional, triangle-free subcubic graphs]
+Assume the Gaspers theorem above. Then 3-path vertex cover on triangle-free subcubic
+graphs can be solved in polynomial space and time \(O(1.2812^n)\).
+\end{theorem*}
+
+\subsection*{Diamonds and \(K_4\)}
+
+\begin{lemma}
+Let \(D\) induce a diamond \(K_4-e\) whose two degree-\(3\) vertices have no
+neighbours outside \(D\), or let \(D\) be a \(K_4\) component. Then
+\(\psi(G)=2+\psi(G-D)\).
+\end{lemma}
+
+\begin{proof}[Proof sketch]
+Any dissociation set keeps at most two vertices of \(D\). Conversely, an exchange
+argument shows that an optimum can be chosen to keep the two adjacent degree-\(3\)
+vertices of the diamond (or any two vertices of the \(K_4\)); deleting the other two
+loses nothing.
+\end{proof}
+
+Repeating these reductions leaves a graph that is triangle-free or whose triangles
+are vertex-disjoint; the bound \(O(1.2812^n)\) applies to the triangle-free case,
+while the general subcubic bound remains \(O(1.2823^n)\).
+
+\smallskip
+\noindent\textbf{Remark.}
+The case analysis of this section is a proof sketch: the numerical inequalities have
+been checked, and the encoding and the diamond/\(K_4\) reduction have been verified by
+exhaustive small-case tests, but the structural case analysis has not been
+formalised. The bounds are conditional on the Gaspers preprint. The bound
+\(O(1.2812^n)\) is specific to triangle-free (or diamond/\(K_4\)-reducible) graphs; it
+is not claimed for all subcubic graphs.
 
 \section{Remarks and limitations}
 
@@ -143,6 +292,12 @@ is elementary and may be folklore; novelty should be verified against the latest
 literature before submission.
 
 \begin{thebibliography}{9}
+
+\bibitem{gaspers26}
+S.~Gaspers.
+Path decompositions of sparse graphs via Gaussian sweeps and faster exponential
+algorithms.
+arXiv:2611.05146, 2026.
 
 \bibitem{bkks11}
 B.~Bre\v{s}ar, F.~Kardo\v{s}, J.~Katreni\v{c}, and G.~Semani\v{s}in.
@@ -182,7 +337,7 @@ Kernelization and Parameterized Algorithms for 3-Path Vertex Cover.
 arXiv:1608.07022, 2016.
 
 \bibitem{kks11}
-F.~Kardoš, J.~Katrenič, and I.~Schiermeyer.
+F.~Kardo\v{s}, J.~Katreni\v{c}, and I.~Schiermeyer.
 On computing the minimum 3-path vertex cover and dissociation number of graphs.
 \emph{Theoretical Computer Science} 412 (2011), 7009--7017.
 

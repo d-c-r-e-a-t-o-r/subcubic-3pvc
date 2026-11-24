@@ -44,9 +44,25 @@ return the first feasible \(k\). The total time is
 | Xiao–Kou 2017 | \(O^*(1.3659^n)\) | exponential |
 | **This note** | \(\boldsymbol{O(1.3069^n)}\) | **polynomial** |
 
+## Conditional improvements (2026 preprint)
+
+Assuming the 2026 preprint of Gaspers (arXiv:2611.05146, Theorem C.3(a)), the following
+conditional bounds are recorded:
+
+- \(O(1.2823^n)\) polynomial space for all subcubic graphs, via a four-state Max 2-CSP
+  encoding and elimination of degree-\(\le2\) variables;
+- \(O(1.2812^n)\) polynomial space for triangle-free subcubic graphs, via a local
+  branching analysis with measure \(\mu=0.95n_3+0.05n\);
+- the \(1.2812\) bound is specific to triangle-free (or diamond/\(K_4\)-reducible)
+  graphs; the general subcubic bound remains \(1.2823\).
+
+These bounds are conditional on the preprint. The case analysis is a proof sketch, and
+the encoding and diamond/\(K_4\) reductions have only been checked exhaustively on
+small graphs.
+
 ## Files
 
-- `note_1.3069.pdf` — compiled 3-page note.
+- `note_1.3069.pdf` — compiled 5-page note.
 - `note_1.3069.tex` — LaTeX source.
 
 ## Compile
@@ -63,6 +79,8 @@ pdflatex note_1.3069.tex
 - The lower bound is cited, not reproved here. The hybrid is elementary and may be
   folklore; a thorough novelty check has not been completed. Do not treat this as an
   established new record until the literature has been checked.
+- The conditional \(1.2823^n\) and \(1.2812^n\) bounds depend on a 2026 preprint and
+  are not part of the unconditional priority claim.
 - The formal version of the parameterized algorithm is: R. Červený, O. Suchý,
   *Generating Faster Algorithms for d-Path Vertex Cover*, WG 2023, LNCS 14093,
   pp. 157–171.
@@ -84,6 +102,8 @@ pdflatex note_1.3069.tex
 7. F. Kardoš, J. Katrenič, I. Schiermeyer. On computing the minimum 3-path vertex cover
    and dissociation number of graphs. Theoretical Computer Science 412 (2011),
    7009–7017.
+8. S. Gaspers. Path decompositions of sparse graphs via Gaussian sweeps and faster
+   exponential algorithms. arXiv:2611.05146, 2026.
 
 ## License
 
